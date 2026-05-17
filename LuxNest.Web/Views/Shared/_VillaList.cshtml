@@ -1,0 +1,109 @@
+﻿@model HomeVM
+<div id="VillasList">
+    <div class="row px-lg-5 m-lg-4 m-sm-0 px-sm-0" style="--bs-gutter-x:0">
+        @foreach (var villa in Model.VillaList)
+        {
+            <div class="p-4 col-md-12 col-lg-6">
+                <div class="row" style="border-radius:5px; border: 1px solid #aaa">
+                    <div class="col-4 p-2">
+                        <img class="d-block w-100" style="border-radius:5px;" src="@villa.ImageUrl">
+                    </div>
+                    <div class="col-8 d-flex flex-column justify-content-center">
+                        <p class="card-title text-gold text-center" style="font-size:xx-large">@villa.Name</p>
+                        <div class="text-center">
+                            <button type="button" class="btn btn-sm btn-outline-gold" data-bs-toggle="modal" data-bs-target='#exampleModal-@(villa.Id)'>
+                                Details
+                            </button>
+                        </div>
+                        @if (Model.CheckInDate != default(DateOnly))
+                        {
+                            <div class="text-center mt-2" style="font-size:12px;">
+                                @if (villa.IsAvailable)
+                                {
+                                    @if (villa.Available2p > 0)
+                                    {
+                                        <span class="text-success me-2">✓ @villa.Available2p × 2-person free</span>
+                                    }
+                                    @if (villa.Available3p > 0)
+                                    {
+                                        <span class="text-success">✓ @villa.Available3p × 3-person free</span>
+                                    }
+                                }
+                                else
+                                {
+                                    @if (villa.Rooms2p > 0)
+                                    {
+                                        <span class="text-muted me-2">✗ @villa.Rooms2p × 2-person</span>
+                                    }
+                                    @if (villa.Rooms3p > 0)
+                                    {
+                                        <span class="text-muted">✗ @villa.Rooms3p × 3-person</span>
+                                    }
+                                }
+                            </div>
+                        }
+                    </div>
+                    <div class="col-12">
+                        <div class="row pb-3 pt-2">
+                            <div class="col-4">
+                                @if (Model.CheckInDate >= DateOnly.FromDateTime(DateTime.Now))
+                                {
+                                    if (villa.IsAvailable)
+                                    {
+                                        <a asp-controller="Booking" asp-action="FinalizeBooking"
+                                        asp-route-villaId="@villa.Id"
+                                        asp-route-checkInDate="@Model.CheckInDate.ToString("yyyy-MM-dd")"
+                                        asp-route-nights="@Model.Nights"
+                                        asp-route-numberOfRooms="@Model.NumberOfRooms"
+                                        asp-route-numberOf2pRooms="@Model.NumberOf2pRooms"
+                                        asp-route-numberOf3pRooms="@Model.NumberOf3pRooms"
+                                        asp-route-numberOfGuests="@Model.NumberOfGuests"
+                                        class="btn btn-success form-control btn-block">
+                                            Book
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-outline-danger disabled form-control btn-block" title="@villa.UnavailableReason">
+                                            @(villa.UnavailableReason ?? "Sold Out")
+                                        </a>
+                                    }
+                                }
+                            </div>
+
+                            <div class="col-8 text-gold fw-bold text-end" style="padding-right: 18px;">
+                                <span class="fw-normal" style="font-size:13px; opacity:0.8;">From </span>
+                                <span class="me-1">$</span>
+                                <span style="font-size:24px; border-bottom:1px solid #ff6a00;">
+                                    @villa.Price.ToString("N2")
+                                </span>
+                                <span class="fw-normal" style="font-size:13px; opacity:0.8;">/room/night</span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--villa details-->
+            <div class="modal fade" id="exampleModal-@(villa.Id)" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl" style="border: 1px solid #aaa; border-radius:7px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-3 text-success" id="exampleModalLabel">Villa Details</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body m-0">
+
+                            <partial name="_VillaDetail" model="@villa" />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

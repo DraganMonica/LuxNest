@@ -1,0 +1,124 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.dataTables_filter {
+    margin-bottom: 20px;
+}
+
+/* ── Hero Section ── */
+.hero-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-img {
+    height: 90vh;
+    object-fit: cover;
+    object-position: center;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.25) 0%,
+        rgba(0, 0, 0, 0.55) 60%,
+        rgba(0, 0, 0, 0.75) 100%
+    );
+    z-index: 1;
+}
+
+.hero-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    padding: 0 1.5rem 3rem;
+}
+
+.hero-title {
+    font-size: clamp(1.8rem, 4vw, 3.2rem);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+    margin-bottom: 0.5rem;
+}
+
+.hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    font-weight: 300;
+    opacity: 0.9;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    margin-bottom: 2rem;
+}
+
+.hero-search-bar {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* ── Gold Button ── */
+.btn-gold {
+    background-color: #c9a84c;
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.btn-gold:hover {
+    background-color: #b8933d;
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+/* ── Gold accent color ── */
+.text-gold {
+    color: #c9a84c !important;
+}
+
+.btn-outline-gold {
+    color: #c9a84c;
+    border-color: #c9a84c;
+    background: transparent;
+}
+
+.btn-outline-gold:hover {
+    background-color: #c9a84c;
+    color: #fff;
+}
+
+/* ── Villas Section ── */
+.villas-section {
+    background-color: #121212;
+    padding: 3rem 0;
+}

@@ -1,0 +1,1 @@
+﻿DELETE FROM Bookings WHERE Id IN (1, 2)

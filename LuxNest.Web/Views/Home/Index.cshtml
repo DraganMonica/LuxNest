@@ -1,0 +1,253 @@
+@model HomeVM
+
+<div>
+    <div class="hero-section position-relative">
+        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="~/images/slide_1.png" class="d-block w-100 hero-img" alt="White Lagoon Resort">
+                </div>
+                <div class="carousel-item">
+                    <img src="~/images/slide_2.png" class="d-block w-100 hero-img" alt="White Lagoon Resort">
+                </div>
+                <div class="carousel-item">
+                    <img src="~/images/slide_3.png" class="d-block w-100 hero-img" alt="White Lagoon Resort">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+
+        <div class="hero-overlay"></div>
+
+        <div class="hero-content text-center text-white">
+            <h1 class="hero-title">Experience Luxury Like Never Before</h1>
+            <p class="hero-subtitle">Discover our exclusive villas and create unforgettable memories</p>
+
+            <form method="post" class="hero-search-bar" asp-action="GetVillasByDate">
+                <!-- hidden fields trimise la server -->
+                <input type="hidden" id="numberOfOf2pRooms" name="numberOfOf2pRooms" value="1" />
+                <input type="hidden" id="numberOfOf3pRooms" name="numberOfOf3pRooms" value="0" />
+
+                <!-- Rândul principal -->
+                <div class="row g-2 align-items-end justify-content-center">
+                    <div class="col-12 col-md-3">
+                        <label class="form-label text-white fw-semibold">Check In Date</label>
+                        <input asp-for="CheckInDate" type="date" class="form-control form-control-lg" id="CheckInDate" onchange="onDateChange()" />
+                        <small id="dateError" class="text-warning fw-semibold" style="display:none;">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i>Check-in must be at least tomorrow
+                        </small>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <label class="form-label text-white fw-semibold">Nights</label>
+                        <select class="form-select form-select-lg" asp-for="Nights">
+                            @for (var i = 1; i < 11; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <label class="form-label text-white fw-semibold">Rooms</label>
+                        <select class="form-select form-select-lg" id="NumberOfRooms" name="NumberOfRooms" onchange="onRoomsChange()">
+                            @for (var i = 1; i <= 5; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <label class="form-label text-white fw-semibold">Guests</label>
+                        <select class="form-select form-select-lg" id="NumberOfGuests" name="NumberOfGuests" onchange="onGuestsChange()">
+                            @for (var i = 1; i <= 10; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <button type="button" id="checkAvailabilityBtn" onclick="fnLoadVillaList()" class="btn btn-gold btn-lg w-100">
+                            <i class="bi bi-search"></i> Check Availability
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Room Distribution card — apare sub rândul principal -->
+                <div class="row justify-content-center mt-3">
+                    <div class="col-12 col-md-9">
+                        <div style="background: rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.25); border-radius: 10px; padding: 14px 20px;">
+                            <div class="d-flex flex-wrap gap-4 align-items-end justify-content-center">
+                                <div>
+                                    <label class="form-label text-white fw-semibold mb-1" style="font-size:14px;">2-person rooms</label>
+                                    <select class="form-select form-select-lg" id="NumberOf2pRooms" onchange="on2pChange()" style="min-width:90px;">
+                                        <option value="1">1</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label text-white fw-semibold mb-1" style="font-size:14px;">3-person rooms</label>
+                                    <select class="form-select form-select-lg" id="NumberOf3pRooms" onchange="on3pChange()" style="min-width:90px;">
+                                        <option value="0">0</option>
+                                    </select>
+                                </div>
+                                <div class="d-flex align-items-end pb-1">
+                                    <span id="capacityFeedback" class="fw-semibold" style="font-size:15px;"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="villas-section">
+        <partial name="_VillaList" model="Model" />
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        function getRooms()  { return parseInt($("#NumberOfRooms").val()) || 1; }
+        function getGuests() { return parseInt($("#NumberOfGuests").val()) || 1; }
+        function get2p()     { return parseInt($("#NumberOf2pRooms").val()) || 0; }
+        function get3p()     { return parseInt($("#NumberOf3pRooms").val()) || 0; }
+
+        var MAX_PER_TYPE = 2; // max camere de acelasi tip per vila
+
+        function rebuildDistribution() {
+            var total = getRooms();
+            var sel2p = $("#NumberOf2pRooms");
+            var sel3p = $("#NumberOf3pRooms");
+            var max2p = Math.min(total, MAX_PER_TYPE);
+            var max3p = Math.min(total, MAX_PER_TYPE);
+            var cur2p = Math.min(get2p(), max2p);
+            var cur3p = Math.min(get3p(), max3p);
+
+            sel2p.empty();
+            sel3p.empty();
+
+            for (var i = 0; i <= max2p; i++) {
+                sel2p.append($('<option>', { value: i, text: i }));
+            }
+            for (var i = 0; i <= max3p; i++) {
+                sel3p.append($('<option>', { value: i, text: i }));
+            }
+
+            // default: all 2p, 0 3p (clamped to max)
+            sel2p.val(cur2p > 0 ? cur2p : Math.min(total, MAX_PER_TYPE));
+            sel3p.val(cur3p > 0 ? cur3p : 0);
+
+            updateFeedback();
+        }
+
+        function on2pChange() { updateFeedback(); }
+        function on3pChange() { updateFeedback(); }
+        function onRoomsChange() { rebuildDistribution(); }
+        function onGuestsChange() { updateFeedback(); }
+
+        function updateFeedback() {
+            var total    = getRooms();
+            var v2p      = get2p();
+            var v3p      = get3p();
+            var capacity = v2p * 2 + v3p * 3;
+            var guests   = getGuests();
+            var roomSum  = v2p + v3p;
+
+            $("#numberOfOf2pRooms").val(v2p);
+            $("#numberOfOf3pRooms").val(v3p);
+
+            var fb = $("#capacityFeedback");
+
+            if (roomSum !== total) {
+                var diff = total - roomSum;
+                var msg = diff > 0
+                    ? 'Please add ' + diff + ' more room(s) to match your selection'
+                    : 'Too many rooms selected — please remove ' + (-diff) + ' room(s)';
+                fb.html('<i class="bi bi-exclamation-triangle-fill text-warning me-1"></i>'
+                    + '<span class="text-warning">' + msg + '</span>');
+                $("#checkAvailabilityBtn").prop("disabled", true);
+            } else if (capacity < guests) {
+                fb.html('<i class="bi bi-exclamation-triangle-fill text-warning me-1"></i>'
+                    + '<span class="text-warning">Capacity: ' + capacity + ' / ' + guests + ' guests needed</span>');
+                $("#checkAvailabilityBtn").prop("disabled", true);
+            } else {
+                fb.html('<i class="bi bi-check-circle-fill text-success me-1"></i>'
+                    + '<span class="text-success">Capacity: ' + capacity + ' guests &mdash; OK</span>');
+                $("#checkAvailabilityBtn").prop("disabled", false);
+            }
+        }
+
+        function isDateValid() {
+            var selected = new Date($("#CheckInDate").val());
+            var today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return selected >= today;
+        }
+
+        function onDateChange() {
+            if (!isDateValid()) {
+                $("#dateError").show();
+                $("#dateError").text("Check-in date cannot be in the past");
+                $("#checkAvailabilityBtn").prop("disabled", true);
+            } else {
+                $("#dateError").hide();
+                updateFeedback();
+            }
+        }
+
+        $(document).ready(function () {
+            rebuildDistribution();
+            onDateChange();
+        });
+
+        function fnLoadVillaList() {
+            if (!isDateValid()) {
+                $("#dateError").show();
+                return;
+            }
+            var numberOfRooms    = getRooms();
+            var numberOfOf2pRooms = get2p();
+            var numberOfOf3pRooms = get3p();
+            var numberOfGuests   = getGuests();
+
+            $('.spinner').show();
+            var objData = {
+                checkInDate: $("#CheckInDate").val(),
+                nights: $("#Nights").val(),
+                numberOfRooms: numberOfRooms,
+                numberOfOf2pRooms: numberOfOf2pRooms,
+                numberOfOf3pRooms: numberOfOf3pRooms,
+                numberOfGuests: numberOfGuests
+            };
+
+            $.ajax({
+                url: "@Url.Action("GetVillasByDate","Home")",
+                data: objData,
+                type: "POST",
+                success: function(data) {
+                    $("#VillasList").empty();
+                    $("#VillasList").html(data);
+                    $('.spinner').hide();
+                },
+                failure: function(response) {
+                    $('.spinner').hide();
+                    alert(response.responseText);
+                },
+                error: function(response) {
+                    $('.spinner').hide();
+                    alert(response.responseText);
+                }
+            });
+        }
+    </script>
+}
